@@ -120,8 +120,42 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$[3].eventName", is("猪肉涨价啦")))
                 .andExpect(jsonPath("$[3].keyword", is("经济")));
 
-
-
     }
 
+    @Test
+    void get_events_when_delete_event_index_1() throws Exception {
+        mockMvc.perform(get("rs/delete/1")).andExpect(status().isOk());
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].eventName", is("第二条事件")))
+                .andExpect(jsonPath("$[0].keyword", is("无标签")))
+                .andExpect(jsonPath("$[1].eventName", is("第三条事件")))
+                .andExpect(jsonPath("$[1].keyword", is("无标签")));
+    }
+
+    @Test
+    void get_events_when_delete_event_index_2() throws Exception {
+        mockMvc.perform(get("rs/delete/2")).andExpect(status().isOk());
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+                .andExpect(jsonPath("$[0].keyword", is("无标签")))
+                .andExpect(jsonPath("$[1].eventName", is("第三条事件")))
+                .andExpect(jsonPath("$[1].keyword", is("无标签")));
+    }
+
+
+    @Test
+    void get_events_when_delete_event_index_3() throws Exception {
+        mockMvc.perform(get("rs/delete/3")).andExpect(status().isOk());
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+                .andExpect(jsonPath("$[0].keyword", is("无标签")))
+                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
+                .andExpect(jsonPath("$[1].keyword", is("无标签")));
+    }
 }
