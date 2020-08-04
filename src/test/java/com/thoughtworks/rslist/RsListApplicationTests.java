@@ -158,4 +158,32 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
                 .andExpect(jsonPath("$[1].keyword", is("无标签")));
     }
+
+    @Test
+    void get_event_when_modify_event_1() throws Exception {
+        RsEvent rsEvent = new RsEvent("重大利好", "");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/modify/1").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/rs/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.eventName", is("重大利好")))
+                .andExpect(jsonPath("$.keyword", is("无标签")));
+    }
+
+    @Test
+    void get_event_when_modify_event_2() throws Exception {
+        RsEvent rsEvent = new RsEvent("猪肉降价啦", "经济");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
+
+        mockMvc.perform(post("/rs/modify/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/rs/2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.eventName", is("猪肉降价啦")))
+                .andExpect(jsonPath("$.keyword", is("经济")));
+    }
 }
