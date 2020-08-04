@@ -108,9 +108,9 @@ class RsListApplicationTests {
 
         mockMvc.perform(post("/rs/add/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/list?start=1&end=3"))
+        mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$", hasSize(4)))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
                 .andExpect(jsonPath("$[0].keyword", is("无标签")))
                 .andExpect(jsonPath("$[1].eventName", is("第二条事件")))

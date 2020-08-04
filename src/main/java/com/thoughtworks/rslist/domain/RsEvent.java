@@ -19,7 +19,7 @@ public class RsEvent {
         return eventName;
     }
 
-    public String getKeywords() {
+    public String getKeyword() {
         return keyword;
     }
 
@@ -27,8 +27,8 @@ public class RsEvent {
         this.eventName = eventName;
     }
 
-    public void setKeywords(String keywords) {
-        this.keyword = keywords;
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 }
 
