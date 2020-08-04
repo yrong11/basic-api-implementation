@@ -124,7 +124,7 @@ class RsListApplicationTests {
 
     @Test
     void get_events_when_delete_event_index_1() throws Exception {
-        mockMvc.perform(get("rs/delete/1")).andExpect(status().isOk());
+        mockMvc.perform(get("/rs/delete/1")).andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -136,7 +136,7 @@ class RsListApplicationTests {
 
     @Test
     void get_events_when_delete_event_index_2() throws Exception {
-        mockMvc.perform(get("rs/delete/2")).andExpect(status().isOk());
+        mockMvc.perform(get("/rs/delete/2")).andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -149,7 +149,7 @@ class RsListApplicationTests {
 
     @Test
     void get_events_when_delete_event_index_3() throws Exception {
-        mockMvc.perform(get("rs/delete/3")).andExpect(status().isOk());
+        mockMvc.perform(get("/rs/delete/3")).andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
