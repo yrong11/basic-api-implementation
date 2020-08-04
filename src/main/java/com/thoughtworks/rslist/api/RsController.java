@@ -22,6 +22,11 @@ public class RsController {
     return rsEventList;
   }
 
+  @GetMapping("/rs/{index}")
+  public RsEvent getRsEvent(@PathVariable int index){
+    return this.rsList.get(index - 1);
+  }
+
   @GetMapping("/rs/list")
   public List<RsEvent> getRsEventBetween(@RequestParam(required = false) Integer start,
                                          @RequestParam(required = false) Integer end){

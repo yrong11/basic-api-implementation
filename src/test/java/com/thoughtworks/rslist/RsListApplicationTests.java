@@ -67,4 +67,29 @@ class RsListApplicationTests {
 
     }
 
+
+    @Test
+    void get_event_when_given_index_is_1() throws Exception {
+        mockMvc.perform(get("/rs/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.eventName", is("第一条事件")))
+                .andExpect(jsonPath("$.keyword", is("无标签")));
+    }
+
+    @Test
+    void get_event_when_given_index_is_2() throws Exception {
+        mockMvc.perform(get("/rs/2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.eventName", is("第二条事件")))
+                .andExpect(jsonPath("$.keyword", is("无标签")));
+    }
+
+    @Test
+    void get_event_when_given_index_is_3() throws Exception {
+        mockMvc.perform(get("/rs/3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.eventName", is("第三条事件")))
+                .andExpect(jsonPath("$.keyword", is("无标签")));
+    }
+
 }
