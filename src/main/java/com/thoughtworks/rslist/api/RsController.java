@@ -21,7 +21,6 @@ public class RsController {
     rsEventList.add(new RsEvent("第三条事件", "无标签"));
     return rsEventList;
   }
-  
 
   @GetMapping("/rs/list")
   public List<RsEvent> getRsEventBetween(@RequestParam(required = false) Integer start,
