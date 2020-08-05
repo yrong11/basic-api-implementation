@@ -64,6 +64,13 @@ class RsControllerTest {
     }
 
     @Test
+    public void get_event_list_should_throw_index_invalid_when_index_outof_range() throws Exception {
+        mockMvc.perform(get("/rs/list?start=0&end=10"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error",is("invalid param")));
+    }
+
+    @Test
     public void get_events_between() throws Exception {
         mockMvc.perform(get("/rs/list?start=1&end=2"))
                 .andExpect(status().isOk())
@@ -116,6 +123,12 @@ class RsControllerTest {
                 .andExpect(jsonPath("$.keyword", is("无标签")));
     }
 
+    @Test
+    void get_event_should_throw_invalid_index_error_when_index_outof_range() throws Exception {
+        mockMvc.perform(get("/rs/4"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error",is("invalid index")));
+    }
 
     @Test
     void should_add_rs_event_when_given_event_name_or_keyword() throws Exception {
