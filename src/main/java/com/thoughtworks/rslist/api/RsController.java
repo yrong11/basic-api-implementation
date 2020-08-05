@@ -50,13 +50,11 @@ public class RsController {
 
   @PostMapping("/rs/modify/{index}")
   public ResponseEntity modifyRsEvent(@PathVariable int index, @RequestBody RsEvent rsEvent) throws JsonProcessingException {
-//    ObjectMapper objectMapper = new ObjectMapper();
-//    RsEvent event = objectMapper.readValue(rsEvent, RsEvent.class);
     if (!rsEvent.getEventName().equals(""))
       rsList.get(index - 1).setEventName(rsEvent.getEventName());
     if (!rsEvent.getKeyword().equals(""))
       rsList.get(index - 1).setKeyword(rsEvent.getKeyword());
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok().header("index",index+"").build();
   }
 
 }

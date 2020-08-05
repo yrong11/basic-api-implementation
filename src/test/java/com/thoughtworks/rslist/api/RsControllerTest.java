@@ -149,7 +149,7 @@ class RsControllerTest {
 
     @Test
     void add_event_should_have_user_and_user_should_have_name() throws Exception {
-        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"经济\",\"user\": {\"name\":\"\"" +
+        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"经济\",\"user\": {"+
                 ",\"age\": 19,\"gender\": \"male\",\"email\": \"a@b.com\",\"phone\": \"18888888888\"}}";
         mockMvc.perform(post("/rs/add/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
