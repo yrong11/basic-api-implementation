@@ -11,10 +11,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -27,6 +31,13 @@ class UserControllerTest {
     @BeforeEach
     void setup(){
         UserController.userList = new ArrayList<>();
+        User user1 = new User("yurong1", "femal", 22, "a@b.com", "13277145678");
+        User user2 = new User("libai", "male", 24, "b@a.com", "14277145678");
+        User user3 = new User("dufu", "male", 24, "b@a.com", "15277145678");
+
+        UserController.userList.add(user1);
+        UserController.userList.add(user2);
+        UserController.userList.add(user3);
     }
 
     @Test
@@ -97,6 +108,19 @@ class UserControllerTest {
 
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void should_return_json_when_get_user() throws Exception {
+//        User("yurong1", "femal", 22, "a@b.com", "13277145678");
+        mockMvc.perform(get("/users"))
+                .andExpect(jsonPath("$[0].user_name", is("yurong1")))
+                .andExpect(jsonPath("$[0].user_age", is(22)))
+                .andExpect(jsonPath("$[0].user_gender", is("femal")))
+                .andExpect(jsonPath("$[0].user_email", is("a@b.com")))
+                .andExpect(jsonPath("$[0].user_phone", is("13277145678")))
+                .andExpect(status().isOk());
     }
 
 

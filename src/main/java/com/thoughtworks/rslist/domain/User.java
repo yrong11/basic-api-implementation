@@ -1,5 +1,8 @@
 package com.thoughtworks.rslist.domain;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.validation.Valid;
@@ -9,14 +12,27 @@ import java.util.Objects;
 @Data
 @Valid
 public class User {
+    @JsonProperty("user_name")
+    @JsonAlias("name")
     @NotNull @Size(max = 8)
     private String name;
+
+    @JsonProperty("user_gender")
+    @JsonAlias("gender")
     @NotNull
     private String gender;
+
+    @JsonProperty("user_age")
+    @JsonAlias("age")
     @NotNull @Min(18) @Max(100)
     private int age;
+
+    @JsonProperty("user_email")
+    @JsonAlias("email")
     @Email
     private String email;
+    @JsonProperty("user_phone")
+    @JsonAlias("phone")
     @Pattern(regexp = "1\\d{10}")
     private String phone;
     private int voteNum = 10;
@@ -69,6 +85,7 @@ public class User {
         this.phone = phone;
     }
 
+    @JsonProperty
     public void setVoteNum(int voteNum) {
         this.voteNum = voteNum;
     }
@@ -93,6 +110,7 @@ public class User {
         return phone;
     }
 
+    @JsonIgnore
     public int getVoteNum() {
         return voteNum;
     }
