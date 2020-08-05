@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,7 @@ public class RsController {
   @GetMapping("/rs/delete/{index}")
   public ResponseEntity deleteRsEvent(@PathVariable int index){
     rsList.remove(index - 1);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok().header("index",index+"").build();
   }
 
   @PostMapping("/rs/modify/{index}")

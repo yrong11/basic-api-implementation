@@ -157,7 +157,7 @@ class RsControllerTest {
 
     @Test
     void get_events_when_delete_event_index_1() throws Exception {
-        mockMvc.perform(get("/rs/delete/1")).andExpect(status().isOk());
+        mockMvc.perform(get("/rs/delete/1")).andExpect(status().isOk()).andExpect(header().stringValues("index", "1"));
         mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -169,7 +169,7 @@ class RsControllerTest {
 
     @Test
     void get_events_when_delete_event_index_2() throws Exception {
-        mockMvc.perform(get("/rs/delete/2")).andExpect(status().isOk());
+        mockMvc.perform(get("/rs/delete/2")).andExpect(status().isOk()).andExpect(header().stringValues("index", "2"));
         mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -182,7 +182,8 @@ class RsControllerTest {
 
     @Test
     void get_events_when_delete_event_index_3() throws Exception {
-        mockMvc.perform(get("/rs/delete/3")).andExpect(status().isOk());
+        mockMvc.perform(get("/rs/delete/3")).andExpect(status().isOk())
+                .andExpect(header().stringValues("index", "3"));
         mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -199,7 +200,7 @@ class RsControllerTest {
         String jsonString = objectMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/modify/1").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()).andExpect(header().stringValues("index", "1"));;
         mockMvc.perform(get("/rs/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.eventName", is("重大利好")))
@@ -213,7 +214,7 @@ class RsControllerTest {
         String jsonString = objectMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/modify/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()).andExpect(header().stringValues("index", "2"));;
         mockMvc.perform(get("/rs/2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.eventName", is("猪肉降价啦")))
