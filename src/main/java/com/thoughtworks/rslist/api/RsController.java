@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.exception.RsEventIndexNotValidException;
+import com.thoughtworks.rslist.service.RsControllerService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,33 +19,25 @@ import java.util.List;
 @RestController
 public class RsController {
     public static List<RsEvent> rsList ;
+    public static RsControllerService rsControllerService = new RsControllerService();
 
 
   @GetMapping("/rs/{index}")
   public ResponseEntity getRsEvent(@PathVariable int index){
-    if (index<1 || index>rsList.size()){
-      throw new RsEventIndexNotValidException("invalid index");
-    }
-    return ResponseEntity.ok(rsList.get(index - 1));
+    return ResponseEntity.ok(rsControllerService.getRsEvent(index));
   }
 
   @GetMapping("/rs/list")
   public ResponseEntity getRsEventBetween(@RequestParam(required = false) Integer start,
                                          @RequestParam(required = false) Integer end){
     if (start != null && end != null)
-      if (start < 1 || end >rsList.size() || end < start)
-        throw new RsEventIndexNotValidException("invalid index");
-      else
-        return ResponseEntity.ok(rsList.subList(start-1, end));
-
+      return ResponseEntity.ok(rsControllerService.getRsEventBetween(start, end));
     return ResponseEntity.ok(rsList);
   }
 
   @PostMapping("/rs/add/event")
   public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) throws JsonProcessingException {
-    if (!UserController.userList.contains(rsEvent))
-      UserController.userList.add(rsEvent.getUser());
-    rsList.add(rsEvent);
+    rsControllerService.addRsEvent(rsEvent);
 
     return ResponseEntity.created(null).build();
 
@@ -58,10 +51,7 @@ public class RsController {
 
   @PostMapping("/rs/modify/{index}")
   public ResponseEntity modifyRsEvent(@PathVariable int index, @RequestBody RsEvent rsEvent) throws JsonProcessingException {
-    if (!rsEvent.getEventName().equals(""))
-      rsList.get(index - 1).setEventName(rsEvent.getEventName());
-    if (!rsEvent.getKeyword().equals(""))
-      rsList.get(index - 1).setKeyword(rsEvent.getKeyword());
+    rsControllerService.modifyRsEvent(index,rsEvent);
     return ResponseEntity.ok().header("index",index+"").build();
   }
 
