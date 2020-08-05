@@ -13,7 +13,6 @@ public class RsEvent {
     String eventName;
     String keyword;
 
-//    @NotNull(groups = {Add.class})
     @Valid
     @NotNull
     User user;
@@ -50,12 +49,12 @@ public class RsEvent {
         this.keyword = keyword;
     }
 
-//    @JsonIgnore
+    @JsonIgnore
     public User getUser() {
         return user;
     }
 
-//    @JsonProperty
+    @JsonProperty
     public void setUser(User user) {
         this.user = user;
     }

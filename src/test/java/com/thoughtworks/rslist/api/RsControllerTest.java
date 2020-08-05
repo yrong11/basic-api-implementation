@@ -119,10 +119,8 @@ class RsControllerTest {
 
     @Test
     void should_add_rs_event_when_given_event_name_or_keyword() throws Exception {
-        User u = new User("yurong1", "femal", 22, "a@b.com", "13277145678");
-        RsEvent rsEvent = new RsEvent("猪肉涨价啦", "经济",u);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = objectMapper.writeValueAsString(rsEvent);
+        String jsonString = "{\"eventName\":\"猪肉涨价啦\",\"keyword\":\"经济\",\"user\": {\"name\":\"yurong\"" +
+                ",\"age\": 19,\"gender\": \"male\",\"email\": \"a@b.com\",\"phone\": \"18888888888\"}}";
 
         mockMvc.perform(post("/rs/add/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
@@ -142,7 +140,7 @@ class RsControllerTest {
 
     @Test
     void add_event_should_have_user() throws Exception {
-        RsEvent rsEvent = new RsEvent("猪肉涨价啦", "经济",null);
+        RsEvent rsEvent = new RsEvent("猪肉涨价啦", "经济");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/add/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
@@ -151,10 +149,8 @@ class RsControllerTest {
 
     @Test
     void add_event_should_have_user_and_user_should_have_name() throws Exception {
-        User u = new User(null, "femal", 1111, "a@b.com", "13277145678");
-        RsEvent rsEvent = new RsEvent("猪肉涨价啦", "经济",u);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = objectMapper.writeValueAsString(rsEvent);
+        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"经济\",\"user\": {\"name\":\"\"" +
+                ",\"age\": 19,\"gender\": \"male\",\"email\": \"a@b.com\",\"phone\": \"18888888888\"}}";
         mockMvc.perform(post("/rs/add/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
