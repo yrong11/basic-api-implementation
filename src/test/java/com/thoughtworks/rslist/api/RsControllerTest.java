@@ -67,7 +67,7 @@ class RsControllerTest {
     public void get_event_list_should_throw_index_invalid_when_index_outof_range() throws Exception {
         mockMvc.perform(get("/rs/list?start=0&end=10"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error",is("invalid param")));
+                .andExpect(jsonPath("$.error",is("invalid index")));
     }
 
     @Test

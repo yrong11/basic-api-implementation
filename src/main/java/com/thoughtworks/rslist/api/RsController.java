@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.exception.RsEventIndexNotValidException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +22,9 @@ public class RsController {
 
   @GetMapping("/rs/{index}")
   public ResponseEntity getRsEvent(@PathVariable int index){
+    if (index<1 || index>rsList.size()){
+      throw new RsEventIndexNotValidException("invalid index");
+    }
     return ResponseEntity.ok(rsList.get(index - 1));
   }
 
@@ -28,7 +32,11 @@ public class RsController {
   public ResponseEntity getRsEventBetween(@RequestParam(required = false) Integer start,
                                          @RequestParam(required = false) Integer end){
     if (start != null && end != null)
-      return ResponseEntity.ok(rsList.subList(start-1, end));
+      if (start < 1 || end >rsList.size() || end < start)
+        throw new RsEventIndexNotValidException("invalid index");
+      else
+        return ResponseEntity.ok(rsList.subList(start-1, end));
+
     return ResponseEntity.ok(rsList);
   }
 
