@@ -2,9 +2,12 @@ package com.thoughtworks.rslist.domain;
 
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.util.Objects;
 
 @Data
+@Valid
 public class User {
     @NotNull @Size(max = 8)
     private String name;
@@ -27,6 +30,23 @@ public class User {
         this.age = age;
         this.email = email;
         this.phone = phone;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return age == user.age &&
+                name.equals(user.name) &&
+                gender.equals(user.gender) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(phone, user.phone);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, gender, age, email, phone);
     }
 
     public void setName(String name) {
