@@ -53,11 +53,13 @@ class RsControllerTest {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
                 .andExpect(jsonPath("$[0].keyword", is("无标签")))
+                .andExpect(jsonPath("$[0]",not(hasKey("user"))))
                 .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
                 .andExpect(jsonPath("$[1].keyword", is("无标签")))
+                .andExpect(jsonPath("$[1]",not(hasKey("user"))))
                 .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyword", is("无标签")));
-//                .andExpect(jsonPath("$[2]",not(hasKey("user"))));
+                .andExpect(jsonPath("$[2].keyword", is("无标签")))
+                .andExpect(jsonPath("$[2]",not(hasKey("user"))));
 
     }
 
