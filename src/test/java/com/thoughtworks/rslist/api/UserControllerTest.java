@@ -57,7 +57,8 @@ class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
 
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid user")));
     }
 
     @Test
@@ -67,7 +68,8 @@ class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
 
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid user")));
     }
 
     @Test
@@ -77,7 +79,8 @@ class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
 
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid user")));
     }
 
     @Test
@@ -87,7 +90,8 @@ class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
 
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid user")));
     }
 
     @Test
@@ -97,7 +101,8 @@ class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
 
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid user")));
     }
 
     @Test
@@ -107,13 +112,13 @@ class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
 
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid user")));
     }
 
 
     @Test
     public void should_return_json_when_get_user() throws Exception {
-//        User("yurong1", "femal", 22, "a@b.com", "13277145678");
         mockMvc.perform(get("/users"))
                 .andExpect(jsonPath("$[0].user_name", is("yurong1")))
                 .andExpect(jsonPath("$[0].user_age", is(22)))
