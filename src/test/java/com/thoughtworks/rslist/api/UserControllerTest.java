@@ -32,18 +32,23 @@ class UserControllerTest {
     MockMvc mockMvc;
     @Autowired
     UserRepository userRepository;
+    User user;
+    UserDto userDto;
 
     @BeforeEach
     void setup(){
         UserController.userList = new ArrayList<>();
-        User user1 = new User("yurong1", "femal", 22, "a@b.com", "13277145678");
+        user = new User("yurong1", "femal", 22, "a@b.com", "13277145678");
         User user2 = new User("libai", "male", 24, "b@a.com", "14277145678");
         User user3 = new User("dufu", "male", 24, "b@a.com", "15277145678");
 
-        UserController.userList.add(user1);
+        UserController.userList.add(user);
         UserController.userList.add(user2);
         UserController.userList.add(user3);
-//        userRepository.deleteAll();
+        userRepository.deleteAll();
+        userDto = UserDto.builder().name(user.getName()).gender(user.getGender()).age(user.getAge())
+                .email(user.getEmail()).phone(user.getPhone()).voteNum(user.getVoteNum()).build();
+        userRepository.save(userDto);
 
     }
 
@@ -138,6 +143,13 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].user_email", is("a@b.com")))
                 .andExpect(jsonPath("$[0].user_phone", is("13277145678")))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void should_get_user() throws Exception {
+        mockMvc.perform(get("/user/"+userDto.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user_name", is("yurong1")));
     }
 
 

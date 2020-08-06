@@ -1,15 +1,13 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.exception.UserIndexNotValidException;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,4 +31,9 @@ public class UserController {
         return ResponseEntity.ok(userList);
     }
 
+    @GetMapping("/user/{id}")
+    public ResponseEntity getUser(@PathVariable int id) throws UserIndexNotValidException {
+        User user = userService.getUser(id);
+        return ResponseEntity.ok(user);
+    }
 }

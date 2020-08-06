@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.componet;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.exception.Error;
 import com.thoughtworks.rslist.exception.RsEventIndexNotValidException;
+import com.thoughtworks.rslist.exception.UserIndexNotValidException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class RsEventExceptionHandler {
     private static final String logExceptionFormat = "Capture Exception By GlobalExceptionHandler - Detail: %s";
     private static Logger log = LoggerFactory.getLogger(RsEventExceptionHandler.class);
 
-    @ExceptionHandler({RsEventIndexNotValidException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({RsEventIndexNotValidException.class, MethodArgumentNotValidException.class, UserIndexNotValidException.class})
     public ResponseEntity RsEventExceptionHandler(Exception e){
         String message;
         if (e instanceof RsEventIndexNotValidException)
