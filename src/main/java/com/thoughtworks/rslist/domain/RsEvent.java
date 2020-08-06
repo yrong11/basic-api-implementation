@@ -6,16 +6,15 @@ import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
 public class RsEvent {
     String eventName;
     String keyword;
-
-    @Valid
     @NotNull
-    User user;
+    Integer userId;
 
     public interface Add{
     }
@@ -24,10 +23,10 @@ public class RsEvent {
         this.eventName = eventName;
         this.keyword = keyword;
     }
-    public RsEvent(String eventName, String keyword, User user){
+    public RsEvent(String eventName, String keyword, int userId){
         this.eventName = eventName;
         this.keyword = keyword;
-        this.user = user;
+        this.userId = userId;
     }
     public RsEvent(){
 
@@ -50,13 +49,13 @@ public class RsEvent {
     }
 
     @JsonIgnore
-    public User getUser() {
-        return user;
+    public int getUser() {
+        return userId;
     }
 
     @JsonProperty
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(int userId) {
+        this.userId = userId;
     }
 }
 

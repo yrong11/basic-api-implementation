@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.service.RsEventService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,8 @@ import java.util.List;
 @RestController
 public class RsController {
     public static List<RsEvent> rsList ;
-    public static RsEventService rsControllerService = new RsEventService();
+    @Autowired
+    public RsEventService rsControllerService;
 
 
   @GetMapping("/rs/{index}")
@@ -30,9 +32,9 @@ public class RsController {
 
   @PostMapping("/rs/add/event")
   public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) throws JsonProcessingException {
-    rsControllerService.addRsEvent(rsEvent);
 
-    return ResponseEntity.created(null).build();
+    boolean flag = rsControllerService.addRsEvent(rsEvent);
+    return flag ? ResponseEntity.created(null).build() : ResponseEntity.badRequest().build();
 
   }
 

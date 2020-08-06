@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.api.RsController;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.dto.RsEventDto;
+import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +18,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.naming.ldap.PagedResultsControl;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -28,22 +35,30 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RsControllerTest {
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private RsEventRepository rsEventRepository;
+    @Autowired
+    private UserRepository userRepository;
+    private UserDto userDto;
+    private RsEventDto rsEventDto;
 
     @BeforeEach
     void setup(){
+        userRepository.deleteAll();
+        rsEventRepository.deleteAll();
+
         RsController.rsList = new ArrayList<>();
         UserController.userList = new ArrayList<>();
         User user1 = new User("yurong1", "femal", 22, "a@b.com", "13277145678");
         User user2 = new User("libai", "male", 24, "b@a.com", "14277145678");
         User user3 = new User("dufu", "male", 24, "b@a.com", "15277145678");
 
-        UserController.userList.add(user1);
-        UserController.userList.add(user2);
-        UserController.userList.add(user3);
-
-        RsController.rsList.add(new RsEvent("第一条事件","无标签", user1));
-        RsController.rsList.add(new RsEvent("第二条事件","无标签", user2));
-        RsController.rsList.add(new RsEvent("第三条事件","无标签", user3));
+//        UserController.userList.add(user1);
+//        UserController.userList.add(user2);
+//        UserController.userList.add(user3);
+//        RsController.rsList.add(new RsEvent("第一条事件","无标签", user1));
+//        RsController.rsList.add(new RsEvent("第二条事件","无标签", user2));
+//        RsController.rsList.add(new RsEvent("第三条事件","无标签", user3));
     }
 
     @Test
@@ -131,28 +146,22 @@ class RsControllerTest {
     }
 
     @Test
-    void should_add_rs_event_when_given_event_name_or_keyword() throws Exception {
-        String jsonString = "{\"eventName\":\"猪肉涨价啦\",\"keyword\":\"经济\",\"user\": {\"name\":\"yurong\"" +
-                ",\"age\": 19,\"gender\": \"male\",\"email\": \"a@b.com\",\"phone\": \"18888888888\"}}";
+    void should_add_rs_event_when_user_exisit() throws Exception {
+        User user = new User("yurong1", "femal", 22, "a@b.com", "13277145678");
+        userDto = UserDto.builder().name(user.getName()).gender(user.getGender()).age(user.getAge())
+                .email(user.getEmail()).phone(user.getPhone()).voteNum(user.getVoteNum()).build();
+        userRepository.save(userDto);
+        String jsonString = "{\"eventName\":\"猪肉涨价啦\",\"keyword\":\"经济\",\"userId\": "+ userDto.getId()+ "}";
 
         mockMvc.perform(post("/rs/add/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
-        mockMvc.perform(get("/rs/list"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(4)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无标签")))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无标签")))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyword", is("无标签")))
-                .andExpect(jsonPath("$[3].eventName", is("猪肉涨价啦")))
-                .andExpect(jsonPath("$[3].keyword", is("经济")));
-
+        List<RsEventDto> rsEventDtos = rsEventRepository.findAll();
+        assertEquals(1, rsEventDtos.size());
+        assertEquals("猪肉涨价啦", rsEventDtos.get(0).getEventName());
     }
 
     @Test
-    void add_event_should_have_user() throws Exception {
+    void add_event_should_have_user_id() throws Exception {
         RsEvent rsEvent = new RsEvent("猪肉涨价啦", "经济");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
@@ -160,15 +169,7 @@ class RsControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid param")));
     }
-
-    @Test
-    void add_event_should_have_user_and_user_should_have_name() throws Exception {
-        String jsonString = "{\"eventName\":\"猪肉涨价了\",\"keyword\":\"经济\",\"user\": {"+
-                "\"age\": 19,\"gender\": \"male\",\"email\": \"a@b.com\",\"phone\": \"18888888888\"}}";
-        mockMvc.perform(post("/rs/add/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("invalid param")));
-    }
+    
 
     @Test
     void get_events_when_delete_event_index_1() throws Exception {
