@@ -36,4 +36,10 @@ public class UserController {
         User user = userService.getUser(id);
         return ResponseEntity.ok(user);
     }
+
+    @DeleteMapping("/user/delete/{id}")
+    public ResponseEntity deleteUser(@PathVariable int id) throws UserIndexNotValidException{
+        userService.deleteUser(id);
+        return ResponseEntity.ok().build();
+    }
 }

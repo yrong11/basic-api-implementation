@@ -14,13 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -150,6 +149,14 @@ class UserControllerTest {
         mockMvc.perform(get("/user/"+userDto.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.user_name", is("yurong1")));
+    }
+
+    @Test
+    public void should_delete_user() throws Exception{
+        mockMvc.perform(delete("/user/delete/"+userDto.getId()))
+                .andExpect(status().isOk());
+        List<UserDto> userDtos = userRepository.findAll();
+        assertEquals(0, userDtos.size());
     }
 
 

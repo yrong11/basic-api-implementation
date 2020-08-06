@@ -6,6 +6,7 @@ import com.thoughtworks.rslist.exception.UserIndexNotValidException;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
@@ -29,5 +30,12 @@ public class UserService {
         UserDto userDto = userRepository.findById(id).get();
         User user = new User(userDto.getName(), userDto.getGender(), userDto.getAge(), userDto.getEmail(), userDto.getPhone());
         return user;
+    }
+
+    @Transactional
+    public void deleteUser(int id) throws UserIndexNotValidException{
+        if (!userRepository.findById(id).isPresent())
+            throw new UserIndexNotValidException();
+        userRepository.deleteById(id);
     }
 }
