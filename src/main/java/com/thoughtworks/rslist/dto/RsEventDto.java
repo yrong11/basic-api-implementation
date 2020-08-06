@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 @Data
@@ -17,7 +18,8 @@ public class RsEventDto {
     private String eventName;
     private String keyword;
 
-    private int userId;
+    @ManyToOne
+    private UserDto userDto;
 
 
 }

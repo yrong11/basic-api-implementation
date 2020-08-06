@@ -4,6 +4,7 @@ import com.thoughtworks.rslist.api.RsController;
 import com.thoughtworks.rslist.api.UserController;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.dto.RsEventDto;
+import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.exception.RsEventIndexNotValidException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RsEventService {
@@ -41,17 +43,26 @@ public class RsEventService {
     public boolean addRsEvent(RsEvent rsEvent){
         if (!userRepository.findById(rsEvent.getUserId()).isPresent())
             return false;
+        UserDto userDto = userRepository.findById(rsEvent.getUserId()).get();
         RsEventDto rsEventDto = RsEventDto.builder().eventName(rsEvent.getEventName())
-                .keyword(rsEvent.getKeyword()).userId(rsEvent.getUserId()).build();
+                .keyword(rsEvent.getKeyword()).userDto(userDto).build();
+
         rsEventRepository.save(rsEventDto);
         return true;
 
     }
 
-    public void modifyRsEvent(int index,RsEvent rsEvent){
+    public boolean updateRsEvent(int rsId,RsEvent rsEvent){
+        if (!rsEventRepository.findById(rsId).isPresent())
+            return false;
+        RsEventDto rsEventDto = rsEventRepository.findById(rsId).get();
+        if (rsEventDto.getUserDto().getId() != rsEvent.getUserId())
+            return false;
         if (!rsEvent.getEventName().equals(""))
-            RsController.rsList.get(index - 1).setEventName(rsEvent.getEventName());
+            rsEventDto.setEventName(rsEvent.getEventName());
         if (!rsEvent.getKeyword().equals(""))
-            RsController.rsList.get(index - 1).setKeyword(rsEvent.getKeyword());
+            rsEventDto.setKeyword(rsEvent.getKeyword());
+        rsEventRepository.save(rsEventDto);
+        return true;
     }
 }

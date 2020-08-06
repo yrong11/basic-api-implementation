@@ -44,10 +44,13 @@ public class RsController {
     return ResponseEntity.ok().header("index",index+"").build();
   }
 
-  @PostMapping("/rs/modify/{index}")
-  public ResponseEntity modifyRsEvent(@PathVariable int index, @RequestBody RsEvent rsEvent) throws JsonProcessingException {
-    rsControllerService.modifyRsEvent(index,rsEvent);
-    return ResponseEntity.ok().header("index",index+"").build();
+  @PatchMapping("/rs/modify/{rsId}")
+  public ResponseEntity updateRsEvent(@PathVariable int rsId, @RequestBody RsEvent rsEvent) throws JsonProcessingException {
+    boolean flag = rsControllerService.updateRsEvent(rsId,rsEvent);
+    if (flag)
+      return ResponseEntity.ok().header("index",rsId+"").build();
+    else
+      return ResponseEntity.badRequest().build();
   }
 
 }

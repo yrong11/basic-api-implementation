@@ -45,10 +45,15 @@ class UserControllerTest {
         UserController.userList.add(user2);
         UserController.userList.add(user3);
         userRepository.deleteAll();
+
+
+    }
+
+    public int initAddUser(){
         userDto = UserDto.builder().name(user.getName()).gender(user.getGender()).age(user.getAge())
                 .email(user.getEmail()).phone(user.getPhone()).voteNum(user.getVoteNum()).build();
         userRepository.save(userDto);
-
+        return userDto.getId();
     }
 
     @Test
@@ -146,20 +151,21 @@ class UserControllerTest {
 
     @Test
     public void should_get_user() throws Exception {
-        mockMvc.perform(get("/user/"+userDto.getId()))
+        int userId = initAddUser();
+        mockMvc.perform(get("/user/"+userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.user_name", is("yurong1")));
     }
 
     @Test
     public void should_delete_user() throws Exception{
-        mockMvc.perform(delete("/user/delete/"+userDto.getId()))
+        int userId = initAddUser();
+        mockMvc.perform(delete("/user/delete/"+userId))
                 .andExpect(status().isOk());
+        userRepository.deleteById(userId);
+        userRepository.deleteAll();
         List<UserDto> userDtos = userRepository.findAll();
         assertEquals(0, userDtos.size());
     }
-
-
-
-
+    
 }

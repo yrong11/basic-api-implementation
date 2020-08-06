@@ -2,9 +2,8 @@ package com.thoughtworks.rslist.dto;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Builder
@@ -22,5 +21,8 @@ public class UserDto {
     private String email;
     private String phone;
     private int voteNum;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "userDto")
+    private List<RsEventDto> rsEventDtos;
 
 }

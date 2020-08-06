@@ -25,8 +25,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -41,7 +40,7 @@ class RsControllerTest {
     private UserRepository userRepository;
     private UserDto userDto;
     private RsEventDto rsEventDto;
-
+    User user;
     @BeforeEach
     void setup(){
         userRepository.deleteAll();
@@ -49,16 +48,24 @@ class RsControllerTest {
 
         RsController.rsList = new ArrayList<>();
         UserController.userList = new ArrayList<>();
-        User user1 = new User("yurong1", "femal", 22, "a@b.com", "13277145678");
+        user = new User("yurong1", "femal", 22, "a@b.com", "13277145678");
         User user2 = new User("libai", "male", 24, "b@a.com", "14277145678");
         User user3 = new User("dufu", "male", 24, "b@a.com", "15277145678");
 
-//        UserController.userList.add(user1);
-//        UserController.userList.add(user2);
-//        UserController.userList.add(user3);
-//        RsController.rsList.add(new RsEvent("第一条事件","无标签", user1));
-//        RsController.rsList.add(new RsEvent("第二条事件","无标签", user2));
-//        RsController.rsList.add(new RsEvent("第三条事件","无标签", user3));
+        UserController.userList.add(user);
+        UserController.userList.add(user2);
+        UserController.userList.add(user3);
+        RsController.rsList.add(new RsEvent("第一条事件","无标签", 1));
+        RsController.rsList.add(new RsEvent("第二条事件","无标签", 1));
+        RsController.rsList.add(new RsEvent("第三条事件","无标签", 1));
+    }
+
+    public void initData(){
+        userDto = UserDto.builder().name(user.getName()).gender(user.getGender()).age(user.getAge())
+                .email(user.getEmail()).phone(user.getPhone()).voteNum(user.getVoteNum()).build();
+        userRepository.save(userDto);
+        rsEventDto = RsEventDto.builder().userDto(userDto).eventName("第一条事件").keyword("无标签").build();
+        rsEventRepository.save(rsEventDto);
     }
 
     @Test
@@ -169,7 +176,7 @@ class RsControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("invalid param")));
     }
-    
+
 
     @Test
     void get_events_when_delete_event_index_1() throws Exception {
@@ -211,29 +218,26 @@ class RsControllerTest {
 
     @Test
     void get_event_when_modify_event_1() throws Exception {
-        RsEvent rsEvent = new RsEvent("重大利好", "");
+        initData();
+        RsEvent rsEvent = new RsEvent("重大利好", "", userDto.getId());
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
 
-        mockMvc.perform(post("/rs/modify/1").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(header().stringValues("index", "1"));;
-        mockMvc.perform(get("/rs/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventName", is("重大利好")))
-                .andExpect(jsonPath("$.keyword", is("无标签")));
+        mockMvc.perform(patch("/rs/modify/"+ rsEventDto.getId()).content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andExpect(header().stringValues("index", rsEventDto.getId()+""));
+        RsEventDto rsEventDto1 = rsEventRepository.findById(rsEventDto.getId()).get();
+        assertEquals("重大利好", rsEventDto1.getEventName());
+        assertEquals("无标签", rsEventDto1.getKeyword());
     }
 
     @Test
     void get_event_when_modify_event_2() throws Exception {
-        RsEvent rsEvent = new RsEvent("猪肉降价啦", "经济");
+        initData();
+        RsEvent rsEvent = new RsEvent("猪肉降价啦", "经济", 2);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
 
-        mockMvc.perform(post("/rs/modify/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(header().stringValues("index", "2"));;
-        mockMvc.perform(get("/rs/2"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventName", is("猪肉降价啦")))
-                .andExpect(jsonPath("$.keyword", is("经济")));
+        mockMvc.perform(patch("/rs/modify/" + rsEventDto.getId()).content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }
