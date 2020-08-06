@@ -5,10 +5,12 @@ import com.thoughtworks.rslist.api.UserController;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.exception.RsEventIndexNotValidException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class RsControllerService {
+@Service
+public class RsEventService {
 
     public RsEvent getRsEvent(int index){
         if (index < 1 || index > RsController.rsList.size()){

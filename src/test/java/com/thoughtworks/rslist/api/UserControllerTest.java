@@ -3,6 +3,8 @@ package com.thoughtworks.rslist.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,6 +30,8 @@ class UserControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    UserRepository userRepository;
 
     @BeforeEach
     void setup(){
@@ -38,6 +43,8 @@ class UserControllerTest {
         UserController.userList.add(user1);
         UserController.userList.add(user2);
         UserController.userList.add(user3);
+//        userRepository.deleteAll();
+
     }
 
     @Test
@@ -48,6 +55,11 @@ class UserControllerTest {
 
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        List<UserDto> userDtos = userRepository.findAll();
+        assertEquals(1, userDtos.size());
+        assertEquals("yurong", userDtos.get(0).getName());
+        assertEquals(user.getEmail(),userDtos.get(0).getEmail());
+
     }
 
     @Test

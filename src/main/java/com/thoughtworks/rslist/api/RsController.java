@@ -1,25 +1,18 @@
 package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
-import com.thoughtworks.rslist.domain.User;
-import com.thoughtworks.rslist.exception.RsEventIndexNotValidException;
-import com.thoughtworks.rslist.service.RsControllerService;
-import org.springframework.http.HttpHeaders;
+import com.thoughtworks.rslist.service.RsEventService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
 public class RsController {
     public static List<RsEvent> rsList ;
-    public static RsControllerService rsControllerService = new RsControllerService();
+    public static RsEventService rsControllerService = new RsEventService();
 
 
   @GetMapping("/rs/{index}")
