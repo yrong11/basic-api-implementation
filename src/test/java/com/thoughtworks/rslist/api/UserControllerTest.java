@@ -1,8 +1,11 @@
 package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,14 +34,17 @@ class UserControllerTest {
     MockMvc mockMvc;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RsEventRepository rsEventRepository;
     User user;
     UserDto userDto;
 
+
     @BeforeEach
     void setup(){
-        UserController.userList = new ArrayList<>();
         user = new User("yurong1", "femal", 22, "a@b.com", "13277145678", 10);
         userRepository.deleteAll();
+        rsEventRepository.deleteAll();
     }
 
     public int addUserToDatabase(){
@@ -46,6 +52,15 @@ class UserControllerTest {
                 .email(user.getEmail()).phone(user.getPhone()).voteNum(user.getVoteNum()).build();
         userRepository.save(userDto);
         return userDto.getId();
+    }
+
+    public int addRsEventToDatabase(int userId){
+        RsEvent rsEvent = new RsEvent("eventName", "keyword", userId);
+        UserDto userDto1 = userRepository.findById(userId).get();
+        RsEventDto rsEventDto = RsEventDto.builder().userDto(userDto1).keyword(rsEvent.getKeyword())
+                .eventName(rsEvent.getEventName()).build();
+        rsEventRepository.save(rsEventDto);
+        return rsEventDto.getId();
     }
 
     @Test
@@ -159,6 +174,19 @@ class UserControllerTest {
                 .andExpect(status().isOk());
         List<UserDto> userDtos = userRepository.findAll();
         assertEquals(0, userDtos.size());
+    }
+
+    @Test
+    public void should_delete_rs_event_when_delete_create_event_user() throws Exception {
+        int userId = addUserToDatabase();
+        int rsEventId = addRsEventToDatabase(userId);
+        List<RsEventDto> rsEventDtos = rsEventRepository.findAll();
+        assertEquals(1, rsEventDtos.size());
+        mockMvc.perform(delete("/user/delete/"+userId))
+                .andExpect(status().isOk());
+        List<UserDto> userDtos = userRepository.findAll();
+        assertEquals(0, userDtos.size());
+        assertEquals(0, rsEventRepository.findAll().size());
     }
 
 }
