@@ -12,14 +12,13 @@ import java.util.List;
 
 @RestController
 public class RsController {
-    public static List<RsEvent> rsList ;
     @Autowired
     public RsEventService rsControllerService;
 
 
-  @GetMapping("/rs/{index}")
-  public ResponseEntity getRsEvent(@PathVariable int index){
-    return ResponseEntity.ok(rsControllerService.getRsEvent(index));
+  @GetMapping("/rs/{rsId}")
+  public ResponseEntity getRsEvent(@PathVariable int rsId){
+    return ResponseEntity.ok(rsControllerService.getRsEvent(rsId));
   }
 
   @GetMapping("/rs/list")
@@ -29,7 +28,7 @@ public class RsController {
   }
 
   @PostMapping("/rs/add/event")
-  public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) throws JsonProcessingException {
+  public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
 
     boolean flag = rsControllerService.addRsEvent(rsEvent);
     return flag ? ResponseEntity.created(null).build() : ResponseEntity.badRequest().build();
@@ -38,13 +37,12 @@ public class RsController {
 
   @DeleteMapping("/rs/delete/{rsId}")
   public ResponseEntity deleteRsEvent(@PathVariable int rsId){
-//    rsList.remove(rsId - 1);
     rsControllerService.deleteRsEvent(rsId);
     return ResponseEntity.ok().header("rsId",rsId+"").build();
   }
 
   @PatchMapping("/rs/modify/{rsId}")
-  public ResponseEntity updateRsEvent(@PathVariable int rsId, @RequestBody RsEvent rsEvent) throws JsonProcessingException {
+  public ResponseEntity updateRsEvent(@PathVariable int rsId, @RequestBody RsEvent rsEvent) {
     boolean flag = rsControllerService.updateRsEvent(rsId,rsEvent);
     if (flag)
       return ResponseEntity.ok().header("index",rsId+"").build();

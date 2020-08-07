@@ -51,19 +51,6 @@ class RsControllerTest {
         userRepository.deleteAll();
         user = new User("yurong1", "femal", 22, "a@b.com", "13277145678", 10);
         initData();
-
-        RsController.rsList = new ArrayList<>();
-        UserController.userList = new ArrayList<>();
-
-        User user2 = new User("libai", "male", 24, "b@a.com", "14277145678");
-        User user3 = new User("dufu", "male", 24, "b@a.com", "15277145678");
-
-        UserController.userList.add(user);
-        UserController.userList.add(user2);
-        UserController.userList.add(user3);
-        RsController.rsList.add(new RsEvent("第一条事件","无标签", 1));
-        RsController.rsList.add(new RsEvent("第二条事件","无标签", 1));
-        RsController.rsList.add(new RsEvent("第三条事件","无标签", 1));
     }
 
     public void initData(){
@@ -96,34 +83,17 @@ class RsControllerTest {
 
 
     @Test
-    void get_event_when_given_index_is_1() throws Exception {
-        mockMvc.perform(get("/rs/1"))
+    void get_event_when_given_index_is_valid() throws Exception {
+        mockMvc.perform(get("/rs/" + rsEventDto.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.eventName", is("第一条事件")))
                 .andExpect(jsonPath("$.keyword", is("无标签")));
     }
 
     @Test
-    void get_event_when_given_index_is_2() throws Exception {
-        mockMvc.perform(get("/rs/2"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventName", is("第二条事件")))
-                .andExpect(jsonPath("$.keyword", is("无标签")));
-    }
-
-    @Test
-    void get_event_when_given_index_is_3() throws Exception {
-        mockMvc.perform(get("/rs/3"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.eventName", is("第三条事件")))
-                .andExpect(jsonPath("$.keyword", is("无标签")));
-    }
-
-    @Test
-    void get_event_should_throw_invalid_index_error_when_index_outof_range() throws Exception {
-        mockMvc.perform(get("/rs/4"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error",is("invalid index")));
+    void get_event_when_given_invalid_index() throws Exception {
+        mockMvc.perform(get("/rs/"+ rsEventDto.getId()+1))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -137,8 +107,8 @@ class RsControllerTest {
         mockMvc.perform(post("/rs/add/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
         List<RsEventDto> rsEventDtos = rsEventRepository.findAll();
-        assertEquals(1, rsEventDtos.size());
-        assertEquals("猪肉涨价啦", rsEventDtos.get(0).getEventName());
+        assertEquals(2, rsEventDtos.size());
+        assertEquals("猪肉涨价啦", rsEventDtos.get(1).getEventName());
     }
 
     @Test

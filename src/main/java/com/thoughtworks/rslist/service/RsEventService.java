@@ -28,11 +28,12 @@ public class RsEventService {
     @Autowired
     RsEventRepository rsEventRepository;
 
-    public RsEvent getRsEvent(int index){
-        if (index < 1 || index > RsController.rsList.size()){
+    public RsEvent getRsEvent(int rsId){
+        Optional<RsEventDto> dto = rsEventRepository.findById(rsId);
+        if (!dto.isPresent()){
             throw new RsEventIndexNotValidException("invalid index");
         }
-        return RsController.rsList.get(index - 1);
+        return RsEvent.builder().userId(dto.get().getUserDto().getId()).keyword(dto.get().getKeyword()).eventName(dto.get().getEventName()).build();
     }
 
     public List<RsEvent> getRsEventBetween(Integer page, Integer size){
