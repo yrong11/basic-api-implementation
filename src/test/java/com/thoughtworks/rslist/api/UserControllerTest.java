@@ -1,6 +1,5 @@
 package com.thoughtworks.rslist.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.dto.UserDto;
@@ -13,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -37,19 +37,11 @@ class UserControllerTest {
     @BeforeEach
     void setup(){
         UserController.userList = new ArrayList<>();
-        user = new User("yurong1", "femal", 22, "a@b.com", "13277145678");
-        User user2 = new User("libai", "male", 24, "b@a.com", "14277145678");
-        User user3 = new User("dufu", "male", 24, "b@a.com", "15277145678");
-
-        UserController.userList.add(user);
-        UserController.userList.add(user2);
-        UserController.userList.add(user3);
+        user = new User("yurong1", "femal", 22, "a@b.com", "13277145678", 10);
         userRepository.deleteAll();
-
-
     }
 
-    public int initAddUser(){
+    public int addUserToDatabase(){
         userDto = UserDto.builder().name(user.getName()).gender(user.getGender()).age(user.getAge())
                 .email(user.getEmail()).phone(user.getPhone()).voteNum(user.getVoteNum()).build();
         userRepository.save(userDto);
@@ -58,7 +50,7 @@ class UserControllerTest {
 
     @Test
     public void should_register_user() throws Exception {
-        User user = new User("yurong", "femal", 23, "yurong@gmail.com", "11321111111");
+        User user = new User("yurong", "femal", 23, "yurong@gmail.com", "11321111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
 
@@ -73,7 +65,7 @@ class UserControllerTest {
 
     @Test
     public void name_should_not_null() throws Exception {
-        User user = new User("", "femal", 23, "yurong@gmail.com", "1321111111");
+        User user = new User("", "femal", 23, "yurong@gmail.com", "1321111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
 
@@ -84,7 +76,7 @@ class UserControllerTest {
 
     @Test
     public void name_size_should_less_than_8() throws Exception {
-        User user = new User("yurongyur", "femal", 23, "yurong@gmail.com", "1321111111");
+        User user = new User("yurongyur", "femal", 23, "yurong@gmail.com", "1321111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
 
@@ -95,7 +87,7 @@ class UserControllerTest {
 
     @Test
     public void age_should_between_18_and_100() throws Exception {
-        User user = new User("yurong", "femal", 11, "yurong@gmail.com", "1321111111");
+        User user = new User("yurong", "femal", 11, "yurong@gmail.com", "1321111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
 
@@ -106,7 +98,7 @@ class UserControllerTest {
 
     @Test
     public void email_should_conform_specification_format() throws Exception {
-        User user = new User("yurong", "femal", 19, "yurong.com", "1321111111");
+        User user = new User("yurong", "femal", 19, "yurong.com", "1321111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
 
@@ -117,7 +109,7 @@ class UserControllerTest {
 
     @Test
     public void phone_length_should_be_11() throws Exception {
-        User user = new User("yurong", "femal", 19, "yurong@gmail.com", "132111111");
+        User user = new User("yurong", "femal", 19, "yurong@gmail.com", "132111111", 10);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
 
@@ -128,7 +120,7 @@ class UserControllerTest {
 
     @Test
     public void phone_should_begin_with_1() throws Exception {
-        User user = new User("yurong", "femal", 19, "yurong@gmail.com", "3321111101");
+        User user = new User("yurong", "femal", 19, "yurong@gmail.com", "3321111101", 10);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
 
@@ -139,8 +131,11 @@ class UserControllerTest {
 
 
     @Test
-    public void should_return_json_when_get_user() throws Exception {
-        mockMvc.perform(get("/users"))
+    public void should_return_json_when_get_users() throws Exception {
+        addUserToDatabase();
+        user.setName("yurong2");addUserToDatabase();
+        mockMvc.perform(get("/users?page=1&size=1"))
+                .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].user_name", is("yurong1")))
                 .andExpect(jsonPath("$[0].user_age", is(22)))
                 .andExpect(jsonPath("$[0].user_gender", is("femal")))
@@ -151,7 +146,7 @@ class UserControllerTest {
 
     @Test
     public void should_get_user() throws Exception {
-        int userId = initAddUser();
+        int userId = addUserToDatabase();
         mockMvc.perform(get("/user/"+userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.user_name", is("yurong1")));
@@ -159,13 +154,11 @@ class UserControllerTest {
 
     @Test
     public void should_delete_user() throws Exception{
-        int userId = initAddUser();
+        int userId = addUserToDatabase();
         mockMvc.perform(delete("/user/delete/"+userId))
                 .andExpect(status().isOk());
-        userRepository.deleteById(userId);
-        userRepository.deleteAll();
         List<UserDto> userDtos = userRepository.findAll();
         assertEquals(0, userDtos.size());
     }
-    
+
 }

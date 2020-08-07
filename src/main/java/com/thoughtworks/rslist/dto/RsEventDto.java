@@ -2,10 +2,7 @@ package com.thoughtworks.rslist.dto;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -15,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RsEventDto {
     @Id
-    @Generated
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String eventName;
     private String keyword;
