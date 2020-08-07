@@ -1,11 +1,53 @@
 package com.thoughtworks.rslist.api;
 
-import org.springframework.web.bind.annotation.RestController;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.thoughtworks.rslist.domain.RsEvent;
+import com.thoughtworks.rslist.service.RsEventService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 public class RsController {
-  private List<String> rsList = Arrays.asList("第一条事件", "第二条事件", "第三条事件");
+    @Autowired
+    public RsEventService rsControllerService;
+
+
+  @GetMapping("/rs/{rsId}")
+  public ResponseEntity getRsEvent(@PathVariable int rsId){
+    return ResponseEntity.ok(rsControllerService.getRsEvent(rsId));
+  }
+
+  @GetMapping("/rs/list")
+  public ResponseEntity getRsEventBetween(@RequestParam(required = false) Integer page,
+                                         @RequestParam(required = false) Integer size){
+    return ResponseEntity.ok(rsControllerService.getRsEventBetween(page, size));
+  }
+
+  @PostMapping("/rs/add/event")
+  public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
+
+    boolean flag = rsControllerService.addRsEvent(rsEvent);
+    return flag ? ResponseEntity.created(null).build() : ResponseEntity.badRequest().build();
+
+  }
+
+  @DeleteMapping("/rs/delete/{rsId}")
+  public ResponseEntity deleteRsEvent(@PathVariable int rsId){
+    rsControllerService.deleteRsEvent(rsId);
+    return ResponseEntity.ok().header("rsId",rsId+"").build();
+  }
+
+  @PatchMapping("/rs/modify/{rsId}")
+  public ResponseEntity updateRsEvent(@PathVariable int rsId, @RequestBody RsEvent rsEvent) {
+    boolean flag = rsControllerService.updateRsEvent(rsId,rsEvent);
+    if (flag)
+      return ResponseEntity.ok().header("index",rsId+"").build();
+    else
+      return ResponseEntity.badRequest().build();
+  }
+
 }

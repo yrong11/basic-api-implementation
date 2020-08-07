@@ -1,1 +1,4 @@
+logging.level.org.springframework.security= ERROR
+logging.level.org.hibernate= ERROR
 
+logging.pattern.console= %d{yyyy-MMM-dd HH:mm:ss.SSS} %-5level [%thread] %msg%n
