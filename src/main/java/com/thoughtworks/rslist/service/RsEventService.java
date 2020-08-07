@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,5 +73,12 @@ public class RsEventService {
             rsEventDto.setKeyword(rsEvent.getKeyword());
         rsEventRepository.save(rsEventDto);
         return true;
+    }
+
+    public void deleteRsEvent(int rsId) {
+        Optional<RsEventDto> dto = rsEventRepository.findById(rsId);
+        if (!dto.isPresent())
+            throw new RsEventIndexNotValidException();
+        rsEventRepository.deleteById(rsId);
     }
 }

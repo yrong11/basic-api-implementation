@@ -36,10 +36,11 @@ public class RsController {
 
   }
 
-  @GetMapping("/rs/delete/{index}")
-  public ResponseEntity deleteRsEvent(@PathVariable int index){
-    rsList.remove(index - 1);
-    return ResponseEntity.ok().header("index",index+"").build();
+  @DeleteMapping("/rs/delete/{rsId}")
+  public ResponseEntity deleteRsEvent(@PathVariable int rsId){
+//    rsList.remove(rsId - 1);
+    rsControllerService.deleteRsEvent(rsId);
+    return ResponseEntity.ok().header("rsId",rsId+"").build();
   }
 
   @PatchMapping("/rs/modify/{rsId}")
