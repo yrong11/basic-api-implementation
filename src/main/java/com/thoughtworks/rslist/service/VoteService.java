@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.naming.ldap.PagedResultsControl;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class VoteService {
@@ -26,16 +27,19 @@ public class VoteService {
     private RsEventRepository rsEventRepository;
 
     @Transactional
-    public void voteRsEvent(Vote vote) throws BadRequestException {
-        if (!userRepository.findById(vote.getUserId()).isPresent())
+    public void voteRsEvent(int rsEventId, Vote vote) throws BadRequestException {
+        Optional<RsEventDto> rsEventDto = rsEventRepository.findById(rsEventId);
+        Optional<UserDto> userDto = userRepository.findById(vote.getUserId());
+        if (!rsEventDto.isPresent() || !userDto.isPresent() || vote.getVoteNum() > userDto.get().getVoteNum())
             throw new BadRequestException();
-        UserDto userDto = userRepository.findById(vote.getUserId()).get();
-        if (userDto.getVoteNum() < vote.getVoteNum())
-            throw new BadRequestException();
-        RsEventDto rsEventDto = rsEventRepository.findById(vote.getRsEventId()).get();
-        VoteDto voteDto = VoteDto.builder().voteNum(vote.getVoteNum()).rsEventDto(rsEventDto)
-                .userDto(userDto).voteTime(new Date()).build();
-        userDto.setVoteNum(userDto.getVoteNum() - vote.getVoteNum());
-        userRepository.save(userDto);
+        UserDto user = userDto.get();
+        user.setVoteNum(user.getVoteNum() - vote.getVoteNum());
+        RsEventDto rsEvent = rsEventDto.get();
+        rsEvent.setVoteNum(rsEvent.getVoteNum() + vote.getVoteNum());
+        VoteDto voteDto = VoteDto.builder().userDto(user).rsEventDto(rsEvent)
+                .voteNum(vote.getVoteNum()).voteTime(vote.getVoteTime()).build();
+        userRepository.save(user);
+        rsEventRepository.save(rsEvent);
+        voteRepository.save(voteDto);
     }
 }

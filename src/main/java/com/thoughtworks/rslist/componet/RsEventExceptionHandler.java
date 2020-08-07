@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.componet;
 
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.exception.BadRequestException;
 import com.thoughtworks.rslist.exception.Error;
 import com.thoughtworks.rslist.exception.RsEventIndexNotValidException;
 import com.thoughtworks.rslist.exception.UserIndexNotValidException;
@@ -38,10 +39,10 @@ public class RsEventExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
-    @ExceptionHandler(value = BindException.class)
-    public ResponseEntity UserExceptionHandler(){
+    @ExceptionHandler(value =  BadRequestException.class)
+    public ResponseEntity BadRequestExceptionHandler(Exception e){
         Error error = new Error();
-        error.setError("invalid user");
+        error.setError(e.getMessage());
 
         return ResponseEntity.badRequest().body(error);
     }

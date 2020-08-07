@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,8 +42,8 @@ class VoteControllerTest {
     private RsEventDto rsEventDto;
     User user;
 
-    public void initData(){
-        user = new User("yurong1", "femal", 22, "a@b.com", "13277145678");
+    public void addUserAndRsEventToDatabase(){
+        user = new User("yurong1", "femal", 22, "a@b.com", "13277145678", 10);
         userDto = UserDto.builder().name(user.getName()).gender(user.getGender()).age(user.getAge())
                 .email(user.getEmail()).phone(user.getPhone()).voteNum(user.getVoteNum()).build();
         userRepository.save(userDto);
@@ -52,6 +53,7 @@ class VoteControllerTest {
 
     @BeforeEach
     void setUp() {
+        addUserAndRsEventToDatabase();
     }
 
     @AfterEach
@@ -60,8 +62,7 @@ class VoteControllerTest {
 
     @Test
     public void test_vote_rs_event() throws Exception {
-        initData();
-        Vote vote = new Vote(userDto.getId(), rsEventDto.getId(), 4);
+        Vote vote = new Vote(userDto.getId(), rsEventDto.getId(), 4, new Date());
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(vote);
         mockMvc.perform(post("/rs/vote/"+ rsEventDto.getId()).content(jsonString).contentType(MediaType.APPLICATION_JSON))
@@ -69,4 +70,23 @@ class VoteControllerTest {
         List<VoteDto> voteDtos = voteRepository.findAll();
         assertEquals(1,voteDtos.size());
     }
+
+    @Test
+    public void return_bad_request_when_rs_id_invalid() throws Exception {
+        Vote vote = new Vote(userDto.getId(), rsEventDto.getId(), 4, new Date());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(vote);
+        mockMvc.perform(post("/rs/vote/"+ 5).content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void return_bad_request_when_user_votenum_less_than_vote_num() throws Exception {
+        Vote vote = new Vote(userDto.getId(), rsEventDto.getId(), 100, new Date());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(vote);
+        mockMvc.perform(post("/rs/vote/"+ rsEventDto.getId()).content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
 }

@@ -20,7 +20,7 @@ public class VoteController {
 
     @PostMapping("/rs/vote/{rsEventId}")
     public ResponseEntity voteRsEvent(@PathVariable int rsEventId, @RequestBody Vote vote) throws BadRequestException {
-        voteService.voteRsEvent(vote);
+        voteService.voteRsEvent(rsEventId, vote);
         return ResponseEntity.ok().build();
 
     }

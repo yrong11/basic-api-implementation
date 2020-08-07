@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "Vote")
 public class VoteDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
