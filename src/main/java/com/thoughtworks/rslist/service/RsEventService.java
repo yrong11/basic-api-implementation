@@ -3,17 +3,21 @@ package com.thoughtworks.rslist.service;
 import com.thoughtworks.rslist.api.RsController;
 import com.thoughtworks.rslist.api.UserController;
 import com.thoughtworks.rslist.domain.RsEvent;
+import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.exception.RsEventIndexNotValidException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class RsEventService {
@@ -30,14 +34,18 @@ public class RsEventService {
         return RsController.rsList.get(index - 1);
     }
 
-    public List<RsEvent> getRsEventBetween(int start, int end){
-        if (start != -1 && end != -1)
-            if (start < 1 || end >RsController.rsList.size() || end < start)
-                throw new RsEventIndexNotValidException("invalid index");
-            else
-                return RsController.rsList.subList(start-1, end);
+    public List<RsEvent> getRsEventBetween(Integer page, Integer size){
+        List<RsEventDto> rsEventDtos;
+        if (page != null && size != null && page > 0 && size > 0){
+            Pageable pageable = PageRequest.of(page - 1, size);
+            rsEventDtos = rsEventRepository.findAll(pageable).getContent();
+        }else
+            rsEventDtos = rsEventRepository.findAll();
 
-        return RsController.rsList;
+        return rsEventDtos.stream().map(
+                item -> RsEvent.builder().eventName(item.getEventName()).keyword(item.getKeyword()).userId(item.getUserDto().getId()).build())
+                .collect(Collectors.toList());
+
     }
 
     public boolean addRsEvent(RsEvent rsEvent){

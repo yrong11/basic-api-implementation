@@ -23,11 +23,9 @@ public class RsController {
   }
 
   @GetMapping("/rs/list")
-  public ResponseEntity getRsEventBetween(@RequestParam(required = false) Integer start,
-                                         @RequestParam(required = false) Integer end){
-    if (start != null && end != null)
-      return ResponseEntity.ok(rsControllerService.getRsEventBetween(start, end));
-    return ResponseEntity.ok(rsList);
+  public ResponseEntity getRsEventBetween(@RequestParam(required = false) Integer page,
+                                         @RequestParam(required = false) Integer size){
+    return ResponseEntity.ok(rsControllerService.getRsEventBetween(page, size));
   }
 
   @PostMapping("/rs/add/event")

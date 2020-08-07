@@ -9,6 +9,7 @@ import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.repository.VoteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +39,22 @@ class RsControllerTest {
     private RsEventRepository rsEventRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private VoteRepository voteRepository;
     private UserDto userDto;
     private RsEventDto rsEventDto;
     User user;
     @BeforeEach
     void setup(){
-        userRepository.deleteAll();
+        voteRepository.deleteAll();
         rsEventRepository.deleteAll();
+        userRepository.deleteAll();
+        user = new User("yurong1", "femal", 22, "a@b.com", "13277145678", 10);
+        initData();
 
         RsController.rsList = new ArrayList<>();
         UserController.userList = new ArrayList<>();
-        user = new User("yurong1", "femal", 22, "a@b.com", "13277145678");
+
         User user2 = new User("libai", "male", 24, "b@a.com", "14277145678");
         User user3 = new User("dufu", "male", 24, "b@a.com", "15277145678");
 
@@ -70,54 +76,22 @@ class RsControllerTest {
 
     @Test
     public void get_rs_event_list() throws Exception {
+        rsEventDto = RsEventDto.builder().userDto(userDto).eventName("第二条事件").keyword("无标签").build();
+        rsEventRepository.save(rsEventDto);
         mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无标签")))
-                .andExpect(jsonPath("$[0]",not(hasKey("user"))))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无标签")))
-                .andExpect(jsonPath("$[1]",not(hasKey("user"))))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyword", is("无标签")))
-                .andExpect(jsonPath("$[2]",not(hasKey("user"))));
-
-    }
-
-    @Test
-    public void get_event_list_should_throw_index_invalid_when_index_outof_range() throws Exception {
-        mockMvc.perform(get("/rs/list?start=0&end=10"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error",is("invalid index")));
-    }
-
-    @Test
-    public void get_events_between() throws Exception {
-        mockMvc.perform(get("/rs/list?start=1&end=2"))
-                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
                 .andExpect(jsonPath("$[0].keyword", is("无标签")))
                 .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
                 .andExpect(jsonPath("$[1].keyword", is("无标签")));
-        mockMvc.perform(get("/rs/list?start=2&end=3"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无标签")))
-                .andExpect(jsonPath("$[1].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无标签")));
-        mockMvc.perform(get("/rs/list?start=1&end=3"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyword", is("无标签")))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyword", is("无标签")))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyword", is("无标签")));
+    }
 
+    @Test
+    public void get_event_list_when_index_outof_range() throws Exception {
+        mockMvc.perform(get("/rs/list?page=1&size=10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()",is(1)));
     }
 
 

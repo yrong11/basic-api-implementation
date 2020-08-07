@@ -2,22 +2,23 @@ package com.thoughtworks.rslist.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.springframework.validation.annotation.Validated;
+import lombok.NoArgsConstructor;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RsEvent {
     String eventName;
     String keyword;
     @NotNull
     Integer userId;
 
-    public interface Add{
-    }
 
     public RsEvent(String eventName, String keyword) {
         this.eventName = eventName;
@@ -27,9 +28,6 @@ public class RsEvent {
         this.eventName = eventName;
         this.keyword = keyword;
         this.userId = userId;
-    }
-    public RsEvent(){
-
     }
 
     public String getEventName() {
