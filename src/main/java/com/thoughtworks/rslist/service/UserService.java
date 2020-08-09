@@ -16,11 +16,13 @@ import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 public class UserService {
 
-    @Autowired
-    UserRepository userRepository;
+
+    final UserRepository userRepository;
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     public void registerUser(User user){
         UserDto userDto = UserDto.builder().name(user.getName()).gender(user.getGender()).age(user.getAge())

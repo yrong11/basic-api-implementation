@@ -1,9 +1,13 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.dto.AppConf;
 import com.thoughtworks.rslist.exception.UserIndexNotValidException;
+import com.thoughtworks.rslist.service.RsEventService;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,8 +19,8 @@ import java.util.List;
 @ComponentScan(basePackages = { "com.*"})
 public class UserController {
     public static List<User> userList;
-    @Autowired
-    UserService userService;
+    ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConf.class);
+    public UserService userService = ctx.getBean(UserService.class);
 
     @PostMapping("/user")
     public ResponseEntity registerUser(@RequestBody @Validated User user){
