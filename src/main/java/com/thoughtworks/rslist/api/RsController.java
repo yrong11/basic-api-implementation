@@ -3,6 +3,9 @@ package com.thoughtworks.rslist.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.dto.AppConf;
+import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.repository.VoteRepository;
 import com.thoughtworks.rslist.service.RsEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -20,8 +23,13 @@ import java.util.List;
 public class RsController {
 
   @Autowired
-  public RsEventService rsControllerService;
-
+  RsEventRepository rsEventRepository;
+  @Autowired
+  UserRepository userRepository;
+  @Autowired
+  VoteRepository voteRepository;
+  @Autowired
+  RsEventService rsControllerService;
 
   @GetMapping("/rs/{rsId}")
   public ResponseEntity getRsEvent(@PathVariable int rsId){

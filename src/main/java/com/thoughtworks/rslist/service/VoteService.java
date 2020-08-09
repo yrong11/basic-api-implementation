@@ -23,12 +23,15 @@ import java.util.stream.Collectors;
 @Service
 public class VoteService {
 
-    @Autowired
-    private VoteRepository voteRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RsEventRepository rsEventRepository;
+    final RsEventRepository rsEventRepository;
+    final UserRepository userRepository;
+    final VoteRepository voteRepository;
+
+    public VoteService(RsEventRepository rsEventRepository, UserRepository userRepository, VoteRepository voteRepository) {
+        this.rsEventRepository = rsEventRepository;
+        this.userRepository = userRepository;
+        this.voteRepository = voteRepository;
+    }
 
     @Transactional
     public void voteRsEvent(int rsEventId, Vote vote) throws BadRequestException {

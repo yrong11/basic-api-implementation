@@ -19,9 +19,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-
-    @Autowired
-    private UserRepository userRepository;
+    final UserRepository userRepository;
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     public void registerUser(User user){
         UserDto userDto = UserDto.builder().name(user.getName()).gender(user.getGender()).age(user.getAge())

@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.api;
 import com.thoughtworks.rslist.domain.Vote;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.exception.BadRequestException;
+import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
 import com.thoughtworks.rslist.service.VoteService;
@@ -15,6 +16,12 @@ import java.util.List;
 
 @RestController
 public class VoteController {
+    @Autowired
+    RsEventRepository rsEventRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    VoteRepository voteRepository;
     @Autowired
     VoteService voteService;
 
