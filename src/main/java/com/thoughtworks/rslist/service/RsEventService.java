@@ -9,10 +9,13 @@ import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.exception.RsEventIndexNotValidException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.repository.VoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,10 +26,16 @@ import java.util.stream.Collectors;
 @Service
 public class RsEventService {
 
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RsEventRepository rsEventRepository;
+    final RsEventRepository rsEventRepository;
+    final UserRepository userRepository;
+    final VoteRepository voteRepository;
+
+    public RsEventService(RsEventRepository rsEventRepository, UserRepository userRepository, VoteRepository voteRepository) {
+        this.rsEventRepository = rsEventRepository;
+        this.userRepository = userRepository;
+        this.voteRepository = voteRepository;
+    }
+
 
     public RsEvent getRsEvent(int rsId){
         Optional<RsEventDto> dto = rsEventRepository.findById(rsId);

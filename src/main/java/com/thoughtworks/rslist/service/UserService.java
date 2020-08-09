@@ -5,6 +5,7 @@ import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.exception.UserIndexNotValidException;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,9 +19,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-
-    @Autowired
-    UserRepository userRepository;
+    final UserRepository userRepository;
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     public void registerUser(User user){
         UserDto userDto = UserDto.builder().name(user.getName()).gender(user.getGender()).age(user.getAge())

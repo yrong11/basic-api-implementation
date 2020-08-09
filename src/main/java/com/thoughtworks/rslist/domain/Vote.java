@@ -16,4 +16,6 @@ public class Vote {
         this.voteNum = voteNum;
         this.voteTime = voteTime;
     }
+
+    public Vote(){}
 }

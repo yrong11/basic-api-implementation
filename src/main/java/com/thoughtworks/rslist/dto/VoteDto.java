@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.dto;
 
+import com.thoughtworks.rslist.domain.Vote;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,4 +25,13 @@ public class VoteDto {
 
     private Date voteTime;
     private int voteNum;
+
+    public Vote convertVote() {
+        Vote vote = new Vote();
+        vote.setVoteNum(this.getVoteNum());
+        vote.setVoteTime(this.getVoteTime());
+        vote.setUserId(this.getUserDto().getId());
+        vote.setRsEventId(this.getRsEventDto().getId());
+        return vote;
+    }
 }
