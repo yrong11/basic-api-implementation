@@ -22,18 +22,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class RsEventService {
 
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    RsEventRepository rsEventRepository;
 
-    final UserRepository userRepository;
-    final RsEventRepository rsEventRepository;
-
-    public RsEventService(UserRepository userRepository, RsEventRepository rsEventRepository){
-        this.userRepository = userRepository;
-        this.rsEventRepository = rsEventRepository;
-        System.out.println("----------------- I'm Rs Event Service----------------");
-
-    }
 
 
     public RsEvent getRsEvent(int rsId){

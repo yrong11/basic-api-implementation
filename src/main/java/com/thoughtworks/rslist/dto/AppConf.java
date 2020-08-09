@@ -17,27 +17,7 @@ import javax.annotation.Resources;
 
 @ComponentScan("com.thoughtworks.rslist.repository")
 @Configuration
-//@ImportResource("classpath:application_bean.xml")
 public class AppConf {
 
-    @Autowired(required = false)
-    RsEventRepository rsEventRepository;
-    @Autowired(required = false)
-    UserRepository userRepository;
 
-
-    @Bean
-    public RsEventService rsEventService(){
-        return new RsEventService(userRepository, rsEventRepository);
-    }
-
-    @Bean
-    public UserService userService(){
-        return new UserService(userRepository);
-    }
-//
-//    @Bean
-//    public VoteService voteService(){
-//        return new VoteService();
-//    }
 }

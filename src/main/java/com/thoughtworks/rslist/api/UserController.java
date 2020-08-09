@@ -18,9 +18,9 @@ import java.util.List;
 @RestController
 @ComponentScan(basePackages = { "com.*"})
 public class UserController {
-    public static List<User> userList;
-    ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConf.class);
-    public UserService userService = ctx.getBean(UserService.class);
+
+    @Autowired
+    public UserService userService;
 
     @PostMapping("/user")
     public ResponseEntity registerUser(@RequestBody @Validated User user){

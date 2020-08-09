@@ -19,8 +19,8 @@ import java.util.List;
 @ComponentScan("com.thoughtworks.rslist")
 public class RsController {
 
-  ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConf.class);
-  public final RsEventService rsControllerService = ctx.getBean(RsEventService.class);
+  @Autowired
+  public RsEventService rsControllerService;
 
 
   @GetMapping("/rs/{rsId}")
